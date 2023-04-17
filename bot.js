@@ -1,8 +1,23 @@
 import { config } from 'dotenv';
-import { Client, GatewayIntentBits } from 'discord.js';
+import { Client, GatewayIntentBits, NewsChannel } from 'discord.js';
 import { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus } from "@discordjs/voice";
 
 config();
+
+Array.random = function (arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+};
+
+const personalized_audios = {
+  "199930872592334848": ["EPIC_CHOIR_SUSPENSE"], // Ruch
+  "227110468102258688": ["CUQUIN_CURUCUANCUANCUAN"], // Iker
+  "460396771709943808": ["pensar_mas_rapido"], // Drew
+  "511564292064280577": ["EVERYBODY_PUT_YOUR_HANDS_IN_THE_AIR", "dry-fart"], //Daniel
+  "465564985091817483": ["HA_GAAAAY"], // Óscar
+  "510933427277791232": ["me_la_cojo"], // Miau
+  "default": "rickroll",
+  "leave": ["y_se_marcho", "league-of-legends-un-invocador-a-dejado-la-partida"]
+}
 
 const client = new Client({
     intents: [
@@ -19,11 +34,29 @@ client.on('ready', () => {
 
 let voice_channel_connection;
 
-async function playLateMotiv(channel)
+async function playLateMotiv(member)
 {
-  voice_channel_connection = await connectToChannel(channel);
+  voice_channel_connection = await connectToChannel(member.voice.channel);
+  let audio;
+  if (personalized_audios[member.id])
+  audio = Array.random(personalized_audios[member.id]);
+  else
+    audio = personalized_audios["default"];
+  play_sound(audio);
+}
+
+async function leaveSound(id)
+{
+  voice_channel_connection = await connectToChannel(id);
+  play_sound(Array.random(personalized_audios["leave"]));
+}
+
+function play_sound(sound)
+{
+  if (!voice_channel_connection) return;
   const player = createAudioPlayer();
-  const resource = createAudioResource('./Spiderman.mp3');
+  console.log("./media/" + sound + ".mp3");
+  const resource = createAudioResource("./media/" + sound + ".mp3");
   player.play(resource);
   voice_channel_connection.subscribe(player);
   player.on(AudioPlayerStatus.Idle, () => {
@@ -33,35 +66,14 @@ async function playLateMotiv(channel)
 }
 
 client.on('voiceStateUpdate', (oldState, newState) => {
-  if (oldState.channelId === null && newState.channelId !== null) {
-    playLateMotiv(newState.member.voice.channel);
+  
+  if (oldState.member.user.bot) return;
+  if (newState.channelId !== null && oldState.channelId !== newState.channelId) {
+    playLateMotiv(newState.member);
   }
-});
-
-client.on('messageCreate', async (message) => {
-  if (message.content === 'join') {
-    const channel = message.member.voice.channel;
-    if (!channel) return message.reply('You need to join a voice channel first!');
-    voice_channel_connection = await connectToChannel(channel);
-    message.reply('I have successfully connected to the channel!');
-    const player = createAudioPlayer();
-    const resource = createAudioResource('./Spiderman.mp3');
-    player.play(resource);
-    voice_channel_connection.subscribe(player);
-    player.on(AudioPlayerStatus.Idle, () => {
-      player.stop();
-      voice_channel_connection.destroy();
-    });
-  }
-  else if (message.content === 'leave') {
-    const channel = message.member.voice.channel;
-    if (!channel) return message.reply('You need to join a voice channel first!');
-    if (!voice_channel_connection) return message.reply('I am not connected to the channel!');
-    voice_channel_connection.destroy();
-    message.reply('I have successfully disconnected from the channel!');
-  }
-  else if (message.content === 'ping') {     
-    message.reply('Pong!');
+  else if (oldState.channelId !== null && newState.channelId === null)
+  {
+    leaveSound(oldState.channel);
   }
 });
 
