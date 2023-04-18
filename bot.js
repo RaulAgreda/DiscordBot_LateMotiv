@@ -2,24 +2,12 @@
 import { config } from 'dotenv';
 import { Client, GatewayIntentBits, NewsChannel } from 'discord.js';
 import { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus } from "@discordjs/voice";
+import { personalized_audios } from './personalizedAudios.js';
 config();
 
 Array.random = function (arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 };
-
-const personalized_audios = {
-  "discord_id": ["audio1.mp3", "audio2.mp3", "..."],
-  "199930872592334848": ["EPIC_CHOIR_SUSPENSE.mp3"], // Ruch
-  "227110468102258688": ["CUQUIN_CURUCUANCUANCUAN.mp3"], // Iker
-  "460396771709943808": ["pensar_mas_rapido.mp3"], // Drew
-  "511564292064280577": ["EVERYBODY_PUT_YOUR_HANDS_IN_THE_AIR.mp3", "dry-fart.mp3"], //Daniel
-  "465564985091817483": ["HA_GAAAAY.mp3"], // Óscar
-  "648252095098519583": ["squirtle.mp3"], // Lana
-  "510933427277791232": ["me_la_cojo.mp3"], // Miau
-  "default": "rickroll.mp3",
-  "leave": ["y_se_marcho.mp3", "league-of-legends-un-invocador-a-dejado-la-partida.mp3"]
-}
 
 const client = new Client({
     intents: [
@@ -34,30 +22,38 @@ client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
 });
 
-let voice_channel_connection;
-
-async function playLateMotiv(member)
+/**
+ * Plays one of the user's audios if exists, otherwise plays the default audio
+ * @param {*} member the member who is joining a channel, or "leave" if a user is leaving a channel
+ * @example playLateMotiv("leave") plays a random leave audio
+ */
+async function playLateMotiv(member, channel)
 {
-  voice_channel_connection = await connectToChannel(member.voice.channel);
-  let audio;
-  if (personalized_audios[member.id])
-  audio = Array.random(personalized_audios[member.id]);
+  if (!channel) channel = member.voice.channel;
+  let audios;
+  if (member === "leave")
+    audios = personalized_audios["leave"];
+  else if (member.id in personalized_audios)
+    audios = personalized_audios[member.id];
   else
-    audio = personalized_audios["default"];
-  play_sound(audio);
+    audios = personalized_audios["default"];
+  
+  const voice_channel_connection = await connectToChannel(channel);
+  // Play the member audio if exists, otherwise play the default audio
+  play_sound(Array.random(audios), voice_channel_connection);
 }
 
-async function leaveSound(id)
-{
-  voice_channel_connection = await connectToChannel(id);
-  play_sound(Array.random(personalized_audios["leave"]));
-}
-
-function play_sound(sound)
+/**
+ * Plays a sound if the user is joining a channel
+ * @param {string} sound the sound to play
+ * @returns
+ * @example play_sound("rickroll.mp3")
+ */
+function play_sound(sound, voice_channel_connection)
 {
   if (!voice_channel_connection) return;
   const player = createAudioPlayer();
-  console.log("./media/" + sound + ".mp3");
+  console.log("./media/" + sound);
   const resource = createAudioResource("./media/" + sound);
   player.play(resource);
   voice_channel_connection.subscribe(player);
@@ -70,11 +66,13 @@ function play_sound(sound)
 client.on('voiceStateUpdate', (oldState, newState) => {
   
   if (oldState.member.user.bot) return;
+  // If the user is joining a channel
   if (oldState.channelId !== newState.channelId && newState.channelId !== null) {
     playLateMotiv(newState.member);
   }
+  // If the user is leaving a channel
   else if (oldState.channelId !== null && newState.channelId === null) {
-    leaveSound(oldState.channel);
+    playLateMotiv("leave", oldState.channel);
   }
 });
 
