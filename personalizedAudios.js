@@ -11,6 +11,7 @@ const personalized_audios = {
     "352179033649315840": ["franchesco.mp3"], // Diego
     "447493447482474496": ["wtf_boom.mp3"], // Hannae
     "508260969110044679": ["doraemon-te-insulta.mp3", "doraemon-sms.mp3", "thats-a-lie.mp3"], // Vadillo
+    "462065689176440832" : ["saquenme-de-latam_gMYTjmu.mp3"], // Alberto
     "default": ["rickroll.mp3"],
     "leave": ["y_se_marcho.mp3", "league-of-legends-un-invocador-a-dejado-la-partida.mp3"]
   }
