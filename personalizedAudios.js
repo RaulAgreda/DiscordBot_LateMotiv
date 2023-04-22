@@ -1,7 +1,7 @@
 const personalized_audios = {
     "discord_id": ["audio1.mp3", "audio2.mp3", "..."],
-    "199930872592334848": ["to-be-continued-sound-effect-perfect-cut_6aKEVm0.mp3"], // Ruch
-    "227110468102258688": ["CUQUIN_CURUCUANCUANCUAN.mp3"], // Iker
+    "199930872592334848": ["po-nhub-intro.mp3"], // Ruch
+    "227110468102258688": ["CUQUIN_CURUCUANCUANCUAN.mp3", "himno-del-centenario-del-real-betis-balonpie-ole-betis-mp3cut.mp3"], // Iker
     "460396771709943808": ["pensar_mas_rapido.mp3"], // Drew
     "511564292064280577": ["dry-fart.mp3"], //Daniel
     "465564985091817483": ["hay-viene-el-bombero.mp3"], // Óscar
