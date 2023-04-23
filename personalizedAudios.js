@@ -12,6 +12,7 @@ const personalized_audios = {
     "447493447482474496": ["wtf_boom.mp3"], // Hannae
     "508260969110044679": ["doraemon-te-insulta.mp3", "doraemon-sms.mp3", "thats-a-lie.mp3"], // Vadillo
     "462065689176440832" : ["saquenme-de-latam_gMYTjmu.mp3"], // Alberto
+    "586230287940452402": ["mondongo.mp3"], // Alter
     "default": ["rickroll.mp3"],
     "leave": ["y_se_marcho.mp3", "league-of-legends-un-invocador-a-dejado-la-partida.mp3"]
   }
