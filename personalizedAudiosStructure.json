@@ -1,0 +1,7 @@
+{
+    "server_id": {
+        "user_id": ["audio1", "audio2", "..."],
+        "leave": ["audio1", "audio2", "..."],
+        "default": ["audio1", "audio2", "..."]
+    }
+}

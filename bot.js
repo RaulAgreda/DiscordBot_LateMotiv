@@ -5,10 +5,11 @@ import { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerSt
 // import { personalized_audios } from './personalizedAudios.js';
 import * as https from 'https';
 import * as commands from './commands.js';
+import * as test from './formtest.js';
 config();
 
-Array.random = function (arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
+Array.prototype.random = function () {
+  return this[Math.floor(Math.random() * this.length)];
 };
 
 const client = new Client({
@@ -48,7 +49,7 @@ async function playLateMotiv(member, channel)
   
   const voice_channel_connection = await connectToChannel(channel);
   // Play the member audio if exists, otherwise play the default audio
-  play_sound(Array.random(audios), voice_channel_connection);
+  play_sound(audios.random(), voice_channel_connection);
 }
 
 /**
@@ -186,7 +187,11 @@ client.on("messageCreate", async message => {
       console.log(e);
     }
   }
-
+  else if (command === "test")
+  {
+    // test.example(message.channel);
+    test.modal_example(message.channel);
+  }
 });
 
 async function connectToChannel(channel) {

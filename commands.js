@@ -1,4 +1,3 @@
-import { Client, GatewayIntentBits, NewsChannel } from 'discord.js';
 import fs from 'fs-extra';
 
 Array.prototype.remove = function(x) {
