@@ -1,6 +1,13 @@
 import { Client, GatewayIntentBits, NewsChannel } from 'discord.js';
 import fs from 'fs-extra';
 
+Array.prototype.remove = function(x) {
+	const index = this.indexOf(x);
+	if (index > -1) { // only splice array when item is found
+		this.splice(index, 1); // 2nd parameter means remove one item only
+	}
+	return this;
+}
 /**
  * !assign_audio @User audio.mp3
  * @param {string} server_id 
@@ -36,7 +43,7 @@ export function remove_audio(server_id, user_id, audio_url)
     return;
   if (!(user_id in personalized_audios[server_id]))
     return;
-  personalized_audios[server_id][user_id].remove = audio_url;
+  personalized_audios[server_id][user_id].remove(audio_url);
   fs.writeFileSync("./personalizedAudios.json", JSON.stringify(personalized_audios));
 }
 
@@ -56,7 +63,11 @@ export function list_audios(server_id, user_id)
   return personalized_audios[server_id][user_id];
 }
 
-function readAudiosJson()
+/**
+ * Reads the personalized audios json
+ * @returns {Object} the personalized audios json
+ */
+export function readAudiosJson()
 {
   if (!fs.existsSync("./personalizedAudios.json"))
   {

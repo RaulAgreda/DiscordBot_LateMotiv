@@ -1,8 +1,8 @@
 // Token is stored in .env file
 import { config } from 'dotenv';
-import { Client, GatewayIntentBits } from 'discord.js';
-import { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus, VoiceConnection } from "@discordjs/voice";
-import { personalized_audios } from './personalizedAudios.js';
+import { Client, GatewayIntentBits, GuildMember } from 'discord.js';
+import { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus, VoiceConnection, VoiceConnectionStatus, AudioPlayer } from "@discordjs/voice";
+// import { personalized_audios } from './personalizedAudios.js';
 import * as commands from './commands.js';
 config();
 
@@ -21,13 +21,15 @@ const client = new Client({
 
 /**
  * Plays one of the user's audios if exists, otherwise plays the default audio
- * @param {*} member the member who is joining a channel, or "leave" if a user is leaving a channel
+ * @param {GuildMember | "leave"} member the member who is joining a channel, or "leave" if a user is leaving a channel
+ * @param {import('discord.js').VoiceBasedChannel} channel the voice channel
  * @example playLateMotiv("leave") plays a random leave audio
  */
 async function playLateMotiv(member, channel)
 {
   if (!channel) channel = member.voice.channel;
   let audios;
+  const personalized_audios = commands.readAudiosJson()[channel.guild.id];
   if (member === "leave")
     audios = personalized_audios["leave"];
   else if (member.id in personalized_audios)
@@ -47,19 +49,24 @@ async function playLateMotiv(member, channel)
  * @returns
  * @example play_sound("rickroll.mp3")
  */
+
 function play_sound(sound, voice_channel_connection)
 {
   if (!voice_channel_connection) return;
   if (!sound.startsWith("http"))
     sound = "./media/" + sound;
-  const resource = createAudioResource(sound, { inlineVolume: true });
+  const resource = createAudioResource('https://cdn.discordapp.com/attachments/523226738986188839/1099982504104046713/tu-madre-tiene-una-p.mp3', {
+    inlineVolume: true
+});
   const player = createAudioPlayer();
   voice_channel_connection.subscribe(player);
-  player.play(resource);
-  player.on(AudioPlayerStatus.Idle, () => {
-    player.stop();
-    voice_channel_connection.destroy();
+  voice_channel_connection.on(VoiceConnectionStatus.Ready, () => {
+    player.play(resource);
   });
+  // player.on(AudioPlayerStatus.Idle, () => {
+  //   player.stop();
+  //   voice_channel_connection.destroy();
+  // });
 }
 
 client.on('ready', () => {
@@ -97,11 +104,26 @@ client.on("messageCreate", async message => {
   }
   else if (command === "assign")
   {
-    const user = message.mentions.users.first();
-    const file = message.attachments.first();
-    console.log(file.url);
+    let user = message.mentions.users.first();
+    if (!user)
+    {
+      if (args[0] === "leave")
+        user = "leave";
+      else if (args[0] === "default")
+        user = "default";
+      else
+        message.reply("User not found");
+    }
+    else
+      user = user.id;
+    let file = message.attachments.first();
+    if (!file)
+      file = args[1];
+    else
+      file = file.url
+    console.log(file);
     try {
-      commands.assign_audio(server_id, user.id, file.url);
+      commands.assign_audio(server_id, user, file);
     }
     catch (e) {
       message.reply("Error assigning audio");
@@ -117,7 +139,7 @@ client.on("messageCreate", async message => {
         message.reply(`No audios found for ${user.username}`);
       else
         message.reply(`Audios of ${user.username}:
-        ${user_audios.join("\n")}`);
+        ${user_audios.join("\n\n")}`);
     }
     catch (e) {
       message.reply("Error listing audios");
@@ -129,7 +151,7 @@ client.on("messageCreate", async message => {
     const user = message.mentions.users.first();
     const file_url = args[1];
     try {
-      commands.remove_audio(server_id, user.id, file);
+      commands.remove_audio(server_id, user.id, file_url);
     }
     catch (e) {
       message.reply("Error removing audio");
