@@ -1,8 +1,9 @@
 // Token is stored in .env file
 import { config } from 'dotenv';
-import { Client, GatewayIntentBits, GuildMember } from 'discord.js';
+import { Client, GatewayDispatchEvents, GatewayIntentBits, GuildMember } from 'discord.js';
 import { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus, VoiceConnection, VoiceConnectionStatus, AudioPlayer } from "@discordjs/voice";
 // import { personalized_audios } from './personalizedAudios.js';
+import * as https from 'https';
 import * as commands from './commands.js';
 config();
 
@@ -15,7 +16,7 @@ const client = new Client({
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.MessageContent,
-        GatewayIntentBits.GuildVoiceStates,
+        GatewayIntentBits.GuildVoiceStates
     ]
 })
 
@@ -31,11 +32,19 @@ async function playLateMotiv(member, channel)
   let audios;
   const personalized_audios = commands.readAudiosJson()[channel.guild.id];
   if (member === "leave")
+  {
     audios = personalized_audios["leave"];
+    if (!audios) return;
+  }
   else if (member.id in personalized_audios)
+  {
     audios = personalized_audios[member.id];
+  }
   else
+  {
     audios = personalized_audios["default"];
+    if (!audios) return;
+  }
   
   const voice_channel_connection = await connectToChannel(channel);
   // Play the member audio if exists, otherwise play the default audio
@@ -53,20 +62,25 @@ async function playLateMotiv(member, channel)
 function play_sound(sound, voice_channel_connection)
 {
   if (!voice_channel_connection) return;
-  if (!sound.startsWith("http"))
-    sound = "./media/" + sound;
-  const resource = createAudioResource('https://cdn.discordapp.com/attachments/523226738986188839/1099982504104046713/tu-madre-tiene-una-p.mp3', {
+  console.log("playing sound: " + sound);
+  if (sound.startsWith("http"))
+    https.get(sound, (stream) => {channel_play_sound(stream, voice_channel_connection)});
+  else
+    channel_play_sound("./media/" + sound, voice_channel_connection);
+}
+
+function channel_play_sound(input, voice_channel_connection)
+{
+  const resource = createAudioResource(input, {
     inlineVolume: true
-});
+    });
   const player = createAudioPlayer();
   voice_channel_connection.subscribe(player);
-  voice_channel_connection.on(VoiceConnectionStatus.Ready, () => {
-    player.play(resource);
+  player.play(resource);
+  player.on(AudioPlayerStatus.Idle, () => {
+    player.stop();
+    voice_channel_connection.destroy();
   });
-  // player.on(AudioPlayerStatus.Idle, () => {
-  //   player.stop();
-  //   voice_channel_connection.destroy();
-  // });
 }
 
 client.on('ready', () => {
@@ -99,6 +113,7 @@ client.on("messageCreate", async message => {
     message.reply(`Available commands:
     !help - Shows this message
     !assign @User sound_url - Assigns a sound to a user
+    !assign @User [attatchment] - Assigns a sound to a user
     !list @User - Lists all the sounds of the user
     !remove @User sound_url - Removes a sound from a user`)
   }
@@ -133,6 +148,19 @@ client.on("messageCreate", async message => {
   else if (command === "list")
   {
     const user = message.mentions.users.first();
+    if (!user)
+    {
+      const option = args[0];
+      if (option == "leave" || option == "default")
+      {
+        const leave_audios = commands.list_audios(server_id, option);
+        if (leave_audios.length === 0)
+          message.reply(`No ${option} audios found`);
+        else
+          message.reply(`${option} audios:\n` + leave_audios.join("\n\n"));
+        return;
+      }
+    }
     try {
       const user_audios = commands.list_audios(server_id, user.id);
       if (user_audios.length === 0)
