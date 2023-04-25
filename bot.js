@@ -1,12 +1,10 @@
-// Token is stored in .env file
-import { config } from 'dotenv';
-import { Client, Collection, GatewayIntentBits, GuildMember } from 'discord.js';
-import { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus, VoiceConnection, VoiceConnectionStatus, AudioPlayer } from "@discordjs/voice";
-import path from 'path';
-import fs from 'fs';
-import * as https from 'https';
-import * as commandsH from './commandsHandler.js';
-config();
+const { Client, Collection, GatewayIntentBits, GuildMember, Events } = require('discord.js');
+const { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus, VoiceConnection, VoiceConnectionStatus, AudioPlayer } = require("@discordjs/voice");
+const https = require('https');
+const commandsH = require('./commandsHandler.js');
+const path = require('path');
+const fs = require('fs');
+require('dotenv').config();
 
 Array.prototype.random = function () {
   return this[Math.floor(Math.random() * this.length)];
@@ -21,21 +19,19 @@ const client = new Client({
     ]
 })
 
+client.once(Events.ClientReady, c => {
+	console.log(`Ready! Logged in as ${c.user.tag}`);
+});
+
 /*=========================== COMMANDS SECTION ===========================*/
 client.commands = new Collection();
 
-const commandsPath = "./commands";
+const commandsPath = path.join(__dirname, 'commands');
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
 
 for (const file of commandFiles) {
 	const filePath = path.join(commandsPath, file);
-  console.log(filePath)
-  async function loadCommand(filePath) {
-    const command = await import(filePath);
-    return command;
-  }
-  
-	const command = await loadCommand(filePath);
+	const command = require(filePath);
 	// Set a new item in the Collection with the key as the command name and the value as the exported module
 	if ('data' in command && 'execute' in command) {
 		client.commands.set(command.data.name, command);
@@ -44,7 +40,9 @@ for (const file of commandFiles) {
 	}
 }
 
+
 client.on(Events.InteractionCreate, async interaction => {
+  console.log(interaction);
 	if (!interaction.isChatInputCommand()) return;
 
 	const command = interaction.client.commands.get(interaction.commandName);
@@ -87,6 +85,8 @@ async function playLateMotiv(member, channel)
   {
     audios = personalized_audios[member.id];
   }
+  else
+    return;
 
   const voice_channel_connection = await connectToChannel(channel);
   // Play the member audio if exists, otherwise play the default audio
@@ -162,10 +162,14 @@ client.on("messageCreate", async message => {
   else if (command === "assign")
   {
     let user = message.mentions.users.first();
-    if (!user && args[0] !== "leave" && args[0] !== "default")
+    if (!user)
     {
-      message.reply("User not found");
-      return;
+      user = args[0];
+      if (user !== "leave" && user !== "default")
+      {
+        message.reply("User not found");
+        return;
+      }
     }
     else
       user = user.id;
@@ -174,9 +178,18 @@ client.on("messageCreate", async message => {
       file = args[1];
     else
       file = file.url
-    console.log(file);
+    if (!file.endsWith(".mp3"))
+    {
+      message.reply("Only mp3 files are supported");
+      return;
+    }
+    // else if (commandsH.readAudiosJson()[server_id][user].indexOf(file) !== -1)
+    // {
+    //   message.reply("Audio already assigned");
+    //   return;
+    // }
     try {
-      commandsH.assign_audio(server_id, user, file);
+      commandsH.assignAudio(server_id, user, file);
     }
     catch (e) {
       message.reply("Error assigning audio");
@@ -191,7 +204,7 @@ client.on("messageCreate", async message => {
       const option = args[0];
       if (option == "leave" || option == "default")
       {
-        const leave_audios = commandsH.list_audios(server_id, option);
+        const leave_audios = commandsH.listAudios(server_id, option);
         if (leave_audios.length === 0)
           message.reply(`No ${option} audios found`);
         else
@@ -200,7 +213,7 @@ client.on("messageCreate", async message => {
       }
     }
     try {
-      const user_audios = commandsH.list_audios(server_id, user.id);
+      const user_audios = commandsH.listAudios(server_id, user.id);
       if (user_audios.length === 0)
         message.reply(`No audios found for ${user.username}`);
       else
@@ -217,7 +230,7 @@ client.on("messageCreate", async message => {
     const user = message.mentions.users.first();
     const file_url = args[1];
     try {
-      commandsH.remove_audio(server_id, user.id, file_url);
+      commandsH.removeAudio(server_id, user.id, file_url);
     }
     catch (e) {
       message.reply("Error removing audio");

@@ -3,6 +3,7 @@
     "@discordjs/builders": "github:discordjs/builders",
     "@discordjs/opus": "github:discordjs/opus",
     "@discordjs/voice": "^0.16.0",
+    "commands": "^0.0.7",
     "discord.js": "^14.9.0",
     "dotenv": "^16.0.3",
     "ffmpeg": "^0.0.4",
@@ -14,7 +15,6 @@
     "path": "^0.12.7"
   },
   "name": "discordbot",
-  "type": "module",
   "version": "1.0.0",
   "main": "bot.js",
   "scripts": {
