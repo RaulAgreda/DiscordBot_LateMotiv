@@ -26,12 +26,20 @@ module.exports = {
 	async execute(interaction) {
 		const user_str = interaction.options.getString('user');
 		let user;
+		let user_name;
 		if (user_str !== "leave" && user_str !== "default")
-			user = interaction.client.users.cache.get(user_str.replace(/\D/g, "")).id;
+		{
+			user = interaction.client.users.cache.get(user_str.replace(/\D/g, ""));
+			user_name = user.username;
+			user = user.id;
+		}
 		else
 			user = user_str;
 		if (!user) return;
 		const audios_list = listAudios(user);
-		await interaction.reply(`List of audios for ${user.username??user}:\n${audios_list.join('\n')}`);
+		if (audios_list.length === 0)
+			await interaction.reply(`No audios for ${user_name??user}`);
+		else
+			await interaction.reply(`List of audios for ${user_name??user}:\n${audios_list.join('\n')}`);
 	},
 };

@@ -1,8 +1,14 @@
 const { SlashCommandBuilder } = require('discord.js');
 const jsonFunction = require('../personalizedAudiosFunctions.js');
 
-/**
- * !remove @User audio.mp3
+Array.prototype.remove = function(x) {
+	const index = this.indexOf(x);
+	if (index > -1)  // only splice array when item is found
+		this.splice(index, 1); // 2nd parameter means remove one item only
+	return this;
+}
+
+ /** !remove @User audio.mp3
  * @param {string} user_id 
  * @param {string} audio_url 
  */
@@ -30,12 +36,17 @@ module.exports = {
 	async execute(interaction) {
 		const user_str = interaction.options.getString('user');
 		let user;
+		let user_name;
 		if (user_str !== "leave" && user_str !== "default")
-			user = interaction.client.users.cache.get(user_str.replace(/\D/g, "")).id;
+		{
+			user = interaction.client.users.cache.get(user_str.replace(/\D/g, ""));
+			user_name = user.username;
+			user = user.id;
+		}
 		else
 			user = user_str;
 		if (!user) return;
 		removeAudio(user, interaction.options.getString('url'));
-		await interaction.reply(`Removed audio from ${user.username??user}`);
+		await interaction.reply(`Removed audio from ${user_name??user}`);
 	},
 };

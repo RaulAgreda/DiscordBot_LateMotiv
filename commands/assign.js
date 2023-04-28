@@ -13,6 +13,7 @@ function assignAudio(user_id, audio_url)
   {
     personalized_audios[user_id] = [];
   }
+  if (personalized_audios[user_id].includes(audio_url)) return;
   personalized_audios[user_id].push(audio_url);
   jsonFunction.writeAudiosJson(personalized_audios);
 }
@@ -33,12 +34,17 @@ module.exports = {
 	async execute(interaction) {
 		const user_str = interaction.options.getString('user');
 		let user;
+		let user_name;
 		if (user_str !== "leave" && user_str !== "default")
-			user = interaction.client.users.cache.get(user_str.replace(/\D/g, "")).id;
+		{
+			user = interaction.client.users.cache.get(user_str.replace(/\D/g, ""));
+			user_name = user.username;
+			user = user.id;
+		}
 		else
 			user = user_str;
 		if (!user) return;
 		assignAudio(user, interaction.options.getString('url'));
-		await interaction.reply(`Assigned audio to ${user.username??user}`);
+		await interaction.reply(`Assigned audio to ${user_name??user}`);
 	},
 };

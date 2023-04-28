@@ -3,7 +3,6 @@ const { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerSta
 const https = require('https');
 const path = require('path');
 const fs = require('fs');
-const commandsH = require(path.join(__dirname, 'commandsHandler.js'));
 const jsonFunction = require(path.join(__dirname, 'personalizedAudiosFunctions.js'));
 require('dotenv').config();
 
@@ -96,12 +95,14 @@ function playLateMotiv(member, channel)
   if (!channel) channel = member.voice.channel;
   let audios;
   const personalized_audios = jsonFunction.readAudiosJson();
-  if (member === "leave")
+  if (member === "leave") // Leave audios
     audios = personalized_audios[member];
-  else
+  else // User audios or default if not exists
     audios = personalized_audios[member.id in personalized_audios ? member.id : "default"];
-
   if (!audios) return;
+  // If the user doesn't have any audios, play the default audio
+  if (audios.length === 0)
+    audios = personalized_audios["default"]; 
 
   // Play the member audio if exists, otherwise play the default audio
   play_sound(audios.random(), channel);
@@ -137,6 +138,15 @@ async function play_sound(sound, channel)
       voice_channel_connection.destroy();
     });
   });
+}
+
+async function connectToChannel(channel) {
+	const connection = joinVoiceChannel({
+		channelId: channel.id,
+		guildId: channel.guild.id,
+		adapterCreator: channel.guild.voiceAdapterCreator,
+	});
+  return connection;
 }
 
 client.login(process.env.TOKEN);
