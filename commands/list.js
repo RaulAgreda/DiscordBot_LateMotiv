@@ -24,9 +24,14 @@ module.exports = {
 				.setDescription('user to assign audio to')
 				.setRequired(true)),
 	async execute(interaction) {
-		const user_str = interaction.options.getString('user').replace(/\D/g, "");
-		const user = interaction.client.users.cache.get(user_str);
-		const audios_list = listAudios(user.id);
-		await interaction.reply(`List of audios for ${user.username}:\n${audios_list.join('\n')}`);
+		const user_str = interaction.options.getString('user');
+		let user;
+		if (user_str !== "leave" && user_str !== "default")
+			user = interaction.client.users.cache.get(user_str.replace(/\D/g, "")).id;
+		else
+			user = user_str;
+		if (!user) return;
+		const audios_list = listAudios(user);
+		await interaction.reply(`List of audios for ${user.username??user}:\n${audios_list.join('\n')}`);
 	},
 };

@@ -28,9 +28,14 @@ module.exports = {
 				.setRequired(true)),
 	/** @param {import('discord.js').Interaction} interaction */
 	async execute(interaction) {
-		const user_str = interaction.options.getString('user').replace(/\D/g, "");
-		const user = interaction.client.users.cache.get(user_str);
-		removeAudio(user.id, interaction.options.getString('url'));
-		await interaction.reply(`Removed audio from ${user.username}`);
+		const user_str = interaction.options.getString('user');
+		let user;
+		if (user_str !== "leave" && user_str !== "default")
+			user = interaction.client.users.cache.get(user_str.replace(/\D/g, "")).id;
+		else
+			user = user_str;
+		if (!user) return;
+		removeAudio(user, interaction.options.getString('url'));
+		await interaction.reply(`Removed audio from ${user.username??user}`);
 	},
 };

@@ -23,6 +23,7 @@ const client = new Client({
     ]
 })
 
+//#region Commands
 /* ==================== Load commands ==================== */
 client.commands = new Collection();
 
@@ -61,6 +62,7 @@ client.on(Events.InteractionCreate, async interaction => {
 		}
 	}
 });
+//#endregion
 
 /* ==================== Load events ==================== */
 
@@ -135,117 +137,6 @@ async function play_sound(sound, channel)
       voice_channel_connection.destroy();
     });
   });
-}
-
-client.on("messageCreate", async message => {
-  if (message.author.bot) return;
-  if (!message.content.startsWith("!")) return;
-  const args = message.content.slice(1).trim().split(/ +/g);
-  console.log(args);
-  // Get server id
-  const server_id = message.guild.id;
-  const command = args.shift().toLowerCase();
-  if (command === "help") 
-  {
-    message.reply(`Available commands:
-    !help - Shows this message
-    !assign @User sound_url - Assigns a sound to a user
-    !assign @User [attatchment] - Assigns a sound to a user
-    !list @User - Lists all the sounds of the user
-    !remove @User sound_url - Removes a sound from a user`)
-  }
-  else if (command === "assign")
-  {
-    let user = message.mentions.users.first();
-    if (!user)
-    {
-      user = args[0];
-      if (user !== "leave" && user !== "default")
-      {
-        message.reply("User not found");
-        return;
-      }
-    }
-    else
-      user = user.id;
-    let file = message.attachments.first();
-    if (!file)
-      file = args[1];
-    else
-      file = file.url
-    if (!file.endsWith(".mp3"))
-    {
-      message.reply("Only mp3 files are supported");
-      return;
-    }
-    // else if (commandsH.readAudiosJson()[server_id][user].indexOf(file) !== -1)
-    // {
-    //   message.reply("Audio already assigned");
-    //   return;
-    // }
-    try {
-      commandsH.assignAudio(server_id, user, file);
-    }
-    catch (e) {
-      message.reply("Error assigning audio");
-      console.log(e);
-    }
-  }
-  else if (command === "list")
-  {
-    const user = message.mentions.users.first();
-    if (!user)
-    {
-      const option = args[0];
-      if (option == "leave" || option == "default")
-      {
-        const leave_audios = commandsH.listAudios(server_id, option);
-        if (leave_audios.length === 0)
-          message.reply(`No ${option} audios found`);
-        else
-          message.reply(`${option} audios:\n` + leave_audios.join("\n\n"));
-        return;
-      }
-    }
-    try {
-      const user_audios = commandsH.listAudios(server_id, user.id);
-      if (user_audios.length === 0)
-        message.reply(`No audios found for ${user.username}`);
-      else
-        message.reply(`Audios of ${user.username}:
-        ${user_audios.join("\n\n")}`);
-    }
-    catch (e) {
-      message.reply("Error listing audios");
-      console.log(e);
-    }
-  }
-  else if (command === "remove")
-  {
-    const user = message.mentions.users.first();
-    const file_url = args[1];
-    try {
-      commandsH.removeAudio(server_id, user.id, file_url);
-    }
-    catch (e) {
-      message.reply("Error removing audio");
-      console.log(e);
-    }
-  }
-  else if (command === "test")
-  {
-    // test.example(message.channel);
-    test.modal_example(message.channel);
-  }
-});
-
-async function connectToChannel(channel) {
-	const connection = joinVoiceChannel({
-		channelId: channel.id,
-		guildId: channel.guild.id,
-		adapterCreator: channel.guild.voiceAdapterCreator,
-	});
-  return connection;
 }
 
 client.login(process.env.TOKEN);
