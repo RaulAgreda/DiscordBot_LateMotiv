@@ -1,4 +1,4 @@
-const { Client, Collection, GatewayIntentBits, GuildMember, Events } = require('discord.js');
+const { Client, Collection, GatewayIntentBits, GuildMember, Events, NewsChannel } = require('discord.js');
 const { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus, VoiceConnection, VoiceConnectionStatus, AudioPlayer } = require("@discordjs/voice");
 const https = require('https');
 const path = require('path');
@@ -74,9 +74,9 @@ client.once(Events.ClientReady, c => {
 /* On join or leave */
 client.on('voiceStateUpdate', async (oldState, newState) => {
   
-  if (oldState.member.user.bot) return;
+  if (newState.member.user.bot) return;
   // If the user is joining a channel
-  if (oldState.channelId !== newState.channelId && newState.channelId !== null) {
+  if (newState.channelId !== null && (!oldState.channelId || oldState.channelId !== newState.channelId)) {
     voice_channel_connection = await connectToChannel(newState.channel);
     playLateMotiv(newState.member);
   }
@@ -91,7 +91,7 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
       }
     }
     else {
-      playLateMotiv("leave");
+      playLateMotiv(newState.member, true);
     }
   }
 });
@@ -102,13 +102,13 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
  * @param {import('discord.js').VoiceBasedChannel} channel the voice channel
  * @example playLateMotiv("leave") plays a random leave audio
  */
-function playLateMotiv(member, channel)
+function playLateMotiv(member, left = false)
 {
-  if (!channel) channel = member.voice.channel;
+  channel = member.voice.channel;
   let audios;
   const personalized_audios = jsonFunction.readAudiosJson();
-  if (member === "leave") // Leave audios
-    audios = personalized_audios[member];
+  if (left) // Leave audios
+    audios = personalized_audios["leave"];
   else // User audios or default if not exists
     audios = personalized_audios[member.id in personalized_audios ? member.id : "default"];
   if (!audios) return;
