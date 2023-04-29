@@ -11,6 +11,7 @@ Array.prototype.random = function () {
 };
 
 const supported_extensions = [".mp3", ".wav", ".ogg", ".flac"];
+let voice_channel_connection;
 
 const client = new Client({
     intents: [
@@ -71,16 +72,27 @@ client.once(Events.ClientReady, c => {
 });
 
 /* On join or leave */
-client.on('voiceStateUpdate', (oldState, newState) => {
+client.on('voiceStateUpdate', async (oldState, newState) => {
   
   if (oldState.member.user.bot) return;
   // If the user is joining a channel
   if (oldState.channelId !== newState.channelId && newState.channelId !== null) {
+    voice_channel_connection = await connectToChannel(newState.channel);
     playLateMotiv(newState.member);
   }
   // If the user is leaving a channel
   else if (oldState.channelId !== null && newState.channelId === null) {
-    playLateMotiv("leave", oldState.channel);
+    // if the user is the last one in the channel
+    if (oldState.channel.members.size === 1) {
+      if (voice_channel_connection)
+      {
+        voice_channel_connection.destroy();
+        voice_channel_connection = null;
+      }
+    }
+    else {
+      playLateMotiv("leave");
+    }
   }
 });
 
@@ -105,7 +117,7 @@ function playLateMotiv(member, channel)
     audios = personalized_audios["default"]; 
 
   // Play the member audio if exists, otherwise play the default audio
-  play_sound(audios.random(), channel);
+  play_sound(audios.random());
 }
 
 /**
@@ -115,9 +127,8 @@ function playLateMotiv(member, channel)
  * @returns
  * @example play_sound("rickroll.mp3")
  */
-async function play_sound(sound, channel)
+function play_sound(sound)
 {
-  const voice_channel_connection = await connectToChannel(channel);
   console.log("playing sound: " + sound);
 
   if (!supported_extensions.some(ext => sound.endsWith(ext)))
@@ -133,10 +144,7 @@ async function play_sound(sound, channel)
     const player = createAudioPlayer();
     voice_channel_connection.subscribe(player);
     player.play(resource);
-    player.on(AudioPlayerStatus.Idle, () => {
-      player.stop();
-      voice_channel_connection.destroy();
-    });
+    player.on(AudioPlayerStatus.Idle, () => {player.stop();});
   });
 }
 
