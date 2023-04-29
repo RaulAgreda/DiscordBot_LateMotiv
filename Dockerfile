@@ -1,17 +1,15 @@
 # Use the official Node.js image as the base image
-FROM node:latest
+FROM arm32v7/node:19.7
 
 # Set the working directory in the container
 WORKDIR /usr/src/app
 
 # Copy package.json and package-lock.json to the container
-COPY package*.json ./
+COPY . .
+
 
 # Install the dependencies
-RUN npm ci --omit=dev 
-
-# Copy the rest of the application files to the container
-COPY . .
+RUN npm install
 
 # Start the bot
 CMD [ "node", "bot.js" ]
