@@ -1,6 +1,8 @@
 const { SlashCommandBuilder } = require('discord.js');
 const jsonFunction = require('../personalizedAudiosFunctions.js');
 
+const supported_extensions = [".mp3", ".wav", ".ogg", ".flac"];
+
 /**
  * !assign_audio @User audio.mp3
  * @param {string} user_id 
@@ -44,7 +46,9 @@ module.exports = {
 		else
 			user = user_str;
 		if (!user) return;
-		assignAudio(user, interaction.options.getString('url'));
+		const audio = interaction.options.getString('url');
+		if (!supported_extensions.some(ext => audio.endsWith(ext))) return;
+		assignAudio(user, audio);
 		await interaction.reply(`Assigned audio to ${user_name??user}`);
 	},
 };
