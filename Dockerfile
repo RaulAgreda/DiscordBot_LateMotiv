@@ -7,8 +7,8 @@ WORKDIR /usr/src/app
 # Copy package.json and package-lock.json to the container
 COPY . .
 
-
 # Install the dependencies
+RUN apt install python3
 RUN npm install
 
 # Start the bot
