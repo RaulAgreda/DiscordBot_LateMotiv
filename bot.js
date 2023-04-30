@@ -11,7 +11,7 @@ Array.prototype.random = function () {
 };
 
 const supported_extensions = [".mp3", ".wav", ".ogg", ".flac"];
-let voice_channel_connection;
+let voice_channel_connection = undefined;
 
 const client = new Client({
     intents: [
@@ -91,6 +91,8 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
       }
     }
     else {
+      if (!voice_channel_connection) 
+        voice_channel_connection = await connectToChannel(oldState.channel);
       playLateMotiv(newState.member, true);
     }
   }
