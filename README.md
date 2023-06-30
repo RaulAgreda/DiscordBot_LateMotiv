@@ -6,10 +6,8 @@ Welcome to DiscordBot_LateMotiv! This bot allows you to add Late Motivs to your 
 
 To get started, follow these simple steps:
 
-1. Create a `media` folder in the root directory of the project and add your audio files there.
-2. Modify the `personalizedAudios.js` file in the root directory and add an entry for each of your friends. Each entry should include the JSON ID of your friend and a list of the audio files you want to play for them. If you don't want to play any audio for someone, just leave their entry blank. The "default" entry will be played if someone who is not assigned any audio joins the channel. The "leave" entry will be played when someone disconnects.
-The id is used to avoid any matching names, and they are put in a .js file for comfort, so you can add comments indicating who are the audios for.
-
-## License
-
-This project is licensed under the MIT License. See the LICENSE file for details.
+1. To add an audio first upload in discord the audio file you want to assign, and then copy it's link.
+2. To assign an audio to a discord user type: /assign <@user> <audio_url>
+If there are more than one audios, when that user joins, a random audio of its assignations will be played.
+3. To remove an audio from a user /remove <@user> <audio_url>
+4. To list all the audios assigned to a user /list <@user>
