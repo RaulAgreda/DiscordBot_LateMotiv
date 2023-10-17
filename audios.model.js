@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+const { Schema, model } = require("mongoose");
 
 const audioSchema = new Schema({
     userId: {
@@ -12,4 +12,6 @@ const audioSchema = new Schema({
     }
 });
 
-export default model("Audios", audioSchema);
+module.exports = {
+    model: model("Audios", audioSchema)
+} 
