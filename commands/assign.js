@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
-const jsonFunction = require('../personalizedAudiosFunctions.js');
+const userAudios = require('../personalizedAudiosFunctions.js');
 
 const supported_extensions = [".mp3", ".wav", ".ogg", ".flac"];
 
@@ -8,16 +8,17 @@ const supported_extensions = [".mp3", ".wav", ".ogg", ".flac"];
  * @param {string} user_id 
  * @param {string} audio_url 
  */
-function assignAudio(user_id, audio_url)
+async function assignAudio(user_id, audio_url)
 {
-  let personalized_audios = jsonFunction.readAudiosJson();
+  let personalized_audios = await userAudios.getAudios(user_id);
+
   if (!(user_id in personalized_audios))
   {
     personalized_audios[user_id] = [];
   }
   if (personalized_audios[user_id].includes(audio_url)) return;
   personalized_audios[user_id].push(audio_url);
-  jsonFunction.writeAudiosJson(personalized_audios);
+  userAudios.writeAudiosJson(personalized_audios);
 }
 
 module.exports = {

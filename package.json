@@ -12,6 +12,7 @@
     "fs-extra": "^11.1.1",
     "https": "^1.0.0",
     "libsodium-wrappers": "^0.7.11",
+    "mongoose": "^7.6.2",
     "path": "^0.12.7"
   },
   "name": "discordbot",

@@ -1,4 +1,5 @@
 const fs = require('fs');
+const model = require('./audios.model.js');
 
 /**
  * Reads the personalized audios json
@@ -22,7 +23,28 @@ function writeAudiosJson(personalized_audios)
   fs.writeFileSync("./personalizedAudios.json", JSON.stringify(personalized_audios, null, 2));
 }
 
+function getAudios(userId)
+{ 
+  try
+  {
+    return model.findOne({ userId: userId });
+
+  }
+  catch (e)
+  {
+    console.log(e);
+    return null;
+  }
+}
+
+function setAudios(userId, audios)
+{
+  return model.findOneAndUpdate({ userId: userId }, { audios: audios });
+}
+
 module.exports = {
     readAudiosJson: readAudiosJson,
-    writeAudiosJson: writeAudiosJson
+    writeAudiosJson: writeAudiosJson,
+    getAudios: getAudios,
+    setAudios: setAudios
 }

@@ -1,10 +1,13 @@
 const { Client, Collection, GatewayIntentBits, GuildMember, Events } = require('discord.js');
 const { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus } = require("@discordjs/voice");
+const { connectDB } = require('./db');
 const https = require('https');
 const path = require('path');
 const fs = require('fs');
 const jsonFunction = require(path.join(__dirname, 'personalizedAudiosFunctions.js'));
 require('dotenv').config();
+
+connectDB();
 
 Array.prototype.random = function () {
   return this[Math.floor(Math.random() * this.length)];
