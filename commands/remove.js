@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
-const jsonFunction = require('../personalizedAudiosFunctions.js');
+const dbFunctions = require('../dbFunctions.js');
 
 Array.prototype.remove = function(x) {
 	const index = this.indexOf(x);
@@ -12,12 +12,11 @@ Array.prototype.remove = function(x) {
  * @param {string} user_id 
  * @param {string} audio_url 
  */
-function removeAudio(user_id, audio_url)
+async function removeAudio(user_id, audio_url)
 {
-  let personalized_audios = jsonFunction.readAudiosJson();
-  if (!(user_id in personalized_audios)) return;
-  personalized_audios[user_id].remove(audio_url);
-  jsonFunction.writeAudiosJson(personalized_audios);
+  let audios = await dbFunctions.getAudios(user_id)
+  audios.remove(audio_url);
+  await dbFunctions.setAudios(user_id, audios);
 }
 
 module.exports = {

@@ -1,13 +1,17 @@
 const { connectDB } = require("./db.js");
 const AudioModel = require('./audios.model.js');
-const { getAudios, setAudios } = require('./personalizedAudiosFunctions.js');
+const { getAudios, setAudios } = require('./dbFunctions.js');
 
 async function Test()
 {
     await connectDB();
     const userId = "123";
-    const audios = await setAudios(userId, ["1", "2", "3"]);
-    console.log(audios);
+    await setAudios(userId);
+    const audios = await getAudios(userId);
+    if (audios)
+        console.log(audios);
+    else
+        console.log("No audios");
 }
 
 Test().then(() => {

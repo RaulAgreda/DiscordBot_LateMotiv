@@ -1,5 +1,6 @@
 const fs = require('fs');
 const { model } = require('./audios.model.js');
+const { connectDB } = require("./db.js");
 
 /**
  * Reads the personalized audios json
@@ -27,25 +28,43 @@ async function getAudios(userId)
 { 
   try
   {
+    // If not connected to db, connect
+    await connectDB();
     const doc = await model.findOne({ userId: userId });
     return doc['audios']
   }
   catch (e)
   {
-    console.log(e);
+    // console.log(e);
     return null;
   }
 }
 
 async function setAudios(userId, audios)
 {
-  try 
+  await connectDB();
+  if (!audios || audios.length == 0)
   {
-    return await model.findOneAndUpdate({ userId: userId }, { audios: audios }, { upsert: true });
+    console.log("Deleting user");
+    try
+    {
+      return await model.deleteOne({ userId: userId });
+    }
+    catch (e)
+    {
+      console.log(e);
+    }
   }
-  catch (e)
+  else
   {
-    console.log(e);
+    try 
+    {
+      return await model.findOneAndUpdate({ userId: userId }, { audios: audios }, { upsert: true });
+    }
+    catch (e)
+    {
+      console.log(e);
+    }
   }
 }
 

@@ -7,8 +7,6 @@ const fs = require('fs');
 const jsonFunction = require(path.join(__dirname, 'personalizedAudiosFunctions.js'));
 require('dotenv').config();
 
-connectDB();
-
 Array.prototype.random = function () {
   return this[Math.floor(Math.random() * this.length)];
 };

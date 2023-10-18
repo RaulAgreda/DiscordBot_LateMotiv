@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, GuildMember } = require('discord.js');
-const jsonFunction = require('../personalizedAudiosFunctions.js');
+const dbFunctions = require('../dbFunctions.js');
 
 /**
  * !list_audios @User
@@ -7,12 +7,9 @@ const jsonFunction = require('../personalizedAudiosFunctions.js');
  * @param {string} user_id 
  * @returns 
  */
-function listAudios(user_id)
+async function listAudios(user_id)
 {
-  let personalized_audios = jsonFunction.readAudiosJson();
-  if (!(user_id in personalized_audios))
-    return [];
-  return personalized_audios[user_id];
+  return await dbFunctions.getAudios(user_id);
 }
 
 module.exports = {

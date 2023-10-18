@@ -1,32 +1,59 @@
-{
-  "227110468102258688": [
+[
+  {
+   "userId": "227110468102258688",
+   "audios": [
     "https://cdn.discordapp.com/attachments/1046523563424874586/1100538097206313021/CUQUIN_CURUCUANCUANCUAN.mp3",
     "https://cdn.discordapp.com/attachments/1101265110888091659/1101631946318155776/cut-de-la-comarca.mp3"
-  ],
-  "465564985091817483": [
-    "https://cdn.discordapp.com/attachments/1101265110888091659/1101265226596360222/hay-viene-el-bombero.mp3"
-  ],
-  "462065689176440832": [
-    "https://cdn.discordapp.com/attachments/1101265110888091659/1101265535800459275/saquenme-de-latam_gMYTjmu_1.mp3"
-  ],
-  "601798569405710337": [
-    "https://cdn.discordapp.com/attachments/1101265110888091659/1101266284932509696/htler-era-buena-gente-illojuan.mp3"
-  ],
-  "199930872592334848": [
-    "https://cdn.discordapp.com/attachments/1101265110888091659/1101632511999754280/xocas-semen-By-tuna.voicemod.net.mp3"
-  ],
-  "leave": [
-    "https://cdn.discordapp.com/attachments/1101265110888091659/1101267116340035584/y_se_marcho_short.mp3"
-  ],
-  "default": [
-    "https://cdn.discordapp.com/attachments/1101265110888091659/1101629051543769211/rick_roll.mp3"
-  ],
-  "648252095098519583": [
-    "https://cdn.discordapp.com/attachments/1101265110888091659/1101630658205462538/WhatsApp_Audio_2023-04-25_at_23.29.48.ogg",
-    "https://cdn.discordapp.com/attachments/1101265110888091659/1101630658536800266/WhatsApp_Audio_2023-04-25_at_23.29.43.ogg"
-  ],
-  "460396771709943808": [
-    "https://cdn.discordapp.com/attachments/1101265110888091659/1101631412555227227/que-te-meto-una-hostia.mp3",
-    "https://cdn.discordapp.com/attachments/1101265110888091659/1101631562358988972/pensar_mas_rapido.mp3"
-  ]
-}
+    ]
+  },
+  {
+    "userId": "465564985091817483",
+    "audios": [
+      "https://cdn.discordapp.com/attachments/1101265110888091659/1101265226596360222/hay-viene-el-bombero.mp3"
+    ]
+  },
+  {
+    "userId": "462065689176440832",
+    "audios": [
+      "https://cdn.discordapp.com/attachments/1101265110888091659/1101265535800459275/saquenme-de-latam_gMYTjmu_1.mp3"
+    ]
+  },
+  {
+    "userId": "601798569405710337",
+    "audios": [
+      "https://cdn.discordapp.com/attachments/1101265110888091659/1101266284932509696/htler-era-buena-gente-illojuan.mp3"
+    ]
+  },
+  {
+    "userId": "199930872592334848",
+    "audios": [
+      "https://cdn.discordapp.com/attachments/1101265110888091659/1101632511999754280/xocas-semen-By-tuna.voicemod.net.mp3"
+    ]
+  },
+  {
+    "userId": "leave",
+    "audios": [
+      "https://cdn.discordapp.com/attachments/1101265110888091659/1101267116340035584/y_se_marcho_short.mp3"
+    ]
+  },
+  {
+    "userId": "default",
+    "audios": [
+      "https://cdn.discordapp.com/attachments/1101265110888091659/1101629051543769211/rick_roll.mp3"
+    ]
+  },
+  {
+    "userId": "648252095098519583",
+    "audios": [
+      "https://cdn.discordapp.com/attachments/1101265110888091659/1101630658205462538/WhatsApp_Audio_2023-04-25_at_23.29.48.ogg",
+      "https://cdn.discordapp.com/attachments/1101265110888091659/1101630658536800266/WhatsApp_Audio_2023-04-25_at_23.29.43.ogg"
+    ]
+  },
+  {
+    "userId": "460396771709943808",
+    "audios": [
+      "https://cdn.discordapp.com/attachments/1101265110888091659/1101631412555227227/que-te-meto-una-hostia.mp3",
+      "https://cdn.discordapp.com/attachments/1101265110888091659/1101631562358988972/pensar_mas_rapido.mp3"
+    ]
+  }
+]
