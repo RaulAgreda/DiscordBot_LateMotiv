@@ -4,7 +4,7 @@ const { connectDB } = require('./db');
 const https = require('https');
 const path = require('path');
 const fs = require('fs');
-const jsonFunction = require(path.join(__dirname, 'personalizedAudiosFunctions.js'));
+const dbFunctions = require(path.join(__dirname, 'dbFunctions.js'));
 require('dotenv').config();
 
 Array.prototype.random = function () {
@@ -104,19 +104,18 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
  * @param {import('discord.js').VoiceBasedChannel} channel the voice channel
  * @example playLateMotiv("leave") plays a random leave audio
  */
-function playLateMotiv(member, left = false)
+async function playLateMotiv(member, left = false)
 {
   channel = member.voice.channel;
   let audios;
-  const personalized_audios = jsonFunction.readAudiosJson();
   if (left) // Leave audios
-    audios = personalized_audios["leave"];
-  else // User audios or default if not exists
-    audios = personalized_audios[member.id in personalized_audios ? member.id : "default"];
-  if (!audios) return;
+    audios = await dbFunctions.getAudios("leave")
+  else
+    audios = await dbFunctions.getAudios(member.id);
+
   // If the user doesn't have any audios, play the default audio
-  if (audios.length === 0)
-    audios = personalized_audios["default"]; 
+  if (!audios || audios.length === 0)
+    audios = await dbFunctions.getAudios("default");
 
   // Play the member audio if exists, otherwise play the default audio
   play_sound(audios.random());

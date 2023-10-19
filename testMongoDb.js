@@ -5,8 +5,8 @@ const { getAudios, setAudios } = require('./dbFunctions.js');
 async function Test()
 {
     await connectDB();
-    const userId = "123";
-    await setAudios(userId);
+    const userId = "default";
+    // await setAudios(userId);
     const audios = await getAudios(userId);
     if (audios)
         console.log(audios);
