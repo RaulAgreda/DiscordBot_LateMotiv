@@ -45,7 +45,7 @@ module.exports = {
 		else
 			user = user_str;
 		if (!user) return;
-		removeAudio(user, interaction.options.getString('url'));
+		await removeAudio(user, interaction.options.getString('url'));
 		await interaction.reply(`Removed audio from ${user_name??user}`);
 	},
 };

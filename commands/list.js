@@ -9,7 +9,7 @@ const dbFunctions = require('../dbFunctions.js');
  */
 async function listAudios(user_id)
 {
-  return await dbFunctions.getAudios(user_id);
+  return await dbFunctions.getAudios(user_id)?? [];
 }
 
 module.exports = {
@@ -33,7 +33,7 @@ module.exports = {
 		else
 			user = user_str;
 		if (!user) return;
-		const audios_list = listAudios(user);
+		const audios_list = await listAudios(user);
 		if (audios_list.length === 0)
 			await interaction.reply(`No audios for ${user_name??user}`);
 		else

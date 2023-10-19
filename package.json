@@ -1,13 +1,18 @@
 {
   "dependencies": {
+    "@discordjs/builders": "github:discordjs/builders",
+    "@discordjs/opus": "github:discordjs/opus",
     "@discordjs/voice": "^0.16.0",
     "commands": "^0.0.7",
     "discord.js": "^14.9.0",
     "dotenv": "^16.0.3",
+    "ffmpeg": "^0.0.4",
+    "ffmpeg-static": "^5.1.0",
     "fs": "^0.0.1-security",
+    "fs-extra": "^11.1.1",
     "https": "^1.0.0",
-    "mongodb": "^6.1.0",
-    "mongoose": "^7.6.2",
+    "libsodium-wrappers": "^0.7.11",
+    "mongoose": "^7.6.3",
     "path": "^0.12.7"
   },
   "name": "discordbot",

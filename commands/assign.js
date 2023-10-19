@@ -10,9 +10,9 @@ const supported_extensions = [".mp3", ".wav", ".ogg", ".flac"];
  */
 async function assignAudio(user_id, audio_url)
 {
-  let audios = await userAudios.getAudios(user_id);
+  let audios = await userAudios.getAudios(user_id)?? [];
 
-  if (audios.includes(audio_url)) return;
+  if (audios.indexOf(audio_url) != -1) return;
   audios.push(audio_url);
   await userAudios.setAudios(user_id, audios);
 }
@@ -48,7 +48,7 @@ module.exports = {
 			await interaction.reply("Unsupported file extension");
 		}
 		else {
-			assignAudio(user, audio);
+			await assignAudio(user, audio);
 			await interaction.reply(`Assigned audio to ${user_name??user}`);
 		}
 	},
