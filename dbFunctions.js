@@ -47,8 +47,6 @@ async function setAudios(userId, audios)
 }
 
 module.exports = {
-    readAudiosJson: readAudiosJson,
-    writeAudiosJson: writeAudiosJson,
     getAudios: getAudios,
     setAudios: setAudios
 }
