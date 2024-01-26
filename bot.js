@@ -1,6 +1,5 @@
 const { Client, Collection, GatewayIntentBits, GuildMember, Events } = require('discord.js');
 const { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus } = require("@discordjs/voice");
-const { connectDB } = require('./db');
 const https = require('https');
 const path = require('path');
 const fs = require('fs');
