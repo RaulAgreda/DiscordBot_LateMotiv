@@ -157,4 +157,4 @@ async function connectToChannel(channel) {
   return connection;
 }
 
-client.login(process.env.TOKEN);
+client.login(process.env.PUBLIC_TOKEN);
