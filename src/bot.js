@@ -6,6 +6,8 @@ const fs = require('fs');
 const dbFunctions = require(path.join(__dirname, 'dbFunctions.js'));
 require('dotenv').config();
 
+console.log("Environment: " + process.env);
+
 Array.prototype.random = function () {
   return this[Math.floor(Math.random() * this.length)];
 };
@@ -156,5 +158,7 @@ async function connectToChannel(channel) {
 	});
   return connection;
 }
+
+console.log("Token: " + process.env.PUBLIC_TOKEN);
 
 client.login(process.env.PUBLIC_TOKEN);
