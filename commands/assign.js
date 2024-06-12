@@ -44,7 +44,7 @@ module.exports = {
 			user = user_str;
 		if (!user) return;
 		const audio = interaction.options.getString('url');
-		if (!supported_extensions.some(ext => audio.endsWith(ext))) {
+		if (!supported_extensions.some(ext => audio.split("?")[0].endsWith(ext))) {
 			await interaction.reply("Unsupported file extension");
 		}
 		else {

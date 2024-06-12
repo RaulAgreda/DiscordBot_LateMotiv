@@ -4,7 +4,7 @@
     "@discordjs/opus": "github:discordjs/opus",
     "@discordjs/voice": "^0.16.0",
     "commands": "^0.0.7",
-    "discord.js": "^14.14.1",
+    "discord.js": "^14.15.3",
     "dotenv": "^16.0.3",
     "ffmpeg": "^0.0.4",
     "ffmpeg-static": "^5.1.0",

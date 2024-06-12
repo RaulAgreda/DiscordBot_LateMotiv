@@ -35,8 +35,8 @@ module.exports = {
 		if (!user) return;
 		const audios_list = await listAudios(user);
 		if (audios_list.length === 0)
-			await interaction.reply(`No audios for ${user_name??user}`);
+			await interaction.reply({content: `No audios for ${user_name??user}`, ephemeral: true});
 		else
-			await interaction.reply(`List of audios for ${user_name??user}:\n${audios_list.join('\n')}`);
+			await interaction.reply({content: `List of audios for ${user_name??user}:\n${audios_list.join('\n')}`, ephemeral: true});
 	},
 };

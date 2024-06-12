@@ -131,7 +131,7 @@ function play_sound(sound)
 {
   console.log("playing sound: " + sound);
 
-  if (!supported_extensions.some(ext => sound.endsWith(ext)))
+  if (!supported_extensions.some(ext => sound.split("?")[0].endsWith(ext)))
   {
     console.log("Unsupported file extension");
     return;
